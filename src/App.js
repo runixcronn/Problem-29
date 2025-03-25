@@ -47,6 +47,7 @@ export default function InviteUsers() {
   const [state, dispatch] = useReducer(reducer, { emails: [], error: null });
   const [inputValue, setInputValue] = useState("");
   const [shake, setShake] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -66,19 +67,29 @@ export default function InviteUsers() {
             type="email"
             name="email"
             id="email"
-            className={`peer block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder-transparent focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 before:content-['✉'] before:absolute before:left-3 before:top-1/2 before:-translate-y-1/2 before:text-gray-400 after:absolute after:left-0 after:bottom-0 after:w-0 after:h-0.5 after:bg-indigo-600 after:transition-all focus:after:w-full ${
-              state.error ? "animate-pulse ring-red-500" : ""
-            } ${shake ? "animate-wiggle" : ""}`}
-            placeholder="E-posta giriniz"
+            className={`peer block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 
+              ${state.error ? "animate-pulse ring-red-500" : ""} 
+              ${shake ? "animate-wiggle" : ""}`}
+            placeholder=" "
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
           />
           <label
             htmlFor="email"
-            className="absolute left-3 top-2 text-gray-400 text-sm transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500"
+            className={`absolute left-3 text-gray-500 transition-all duration-300 
+              ${
+                isFocused || inputValue
+                  ? "top-[-1.25rem] text-xs text-indigo-600"
+                  : "top-2.5 text-sm"
+              }`}
           >
             E-posta giriniz
           </label>
+          {state.error && (
+            <p className="text-red-500 mt-1 text-sm">{state.error}</p>
+          )}
         </div>
         <button
           type="submit"
@@ -88,7 +99,6 @@ export default function InviteUsers() {
           Davetiye gönderin
         </button>
       </form>
-      {state.error && <p className="text-red-500 mt-2">{state.error}</p>}
 
       <div className="mt-10">
         <h3 className="text-sm font-medium text-gray-500">Ekip üyeleri</h3>
@@ -96,7 +106,7 @@ export default function InviteUsers() {
           {state.emails.map((email, index) => (
             <div
               key={index}
-              className="flex items-center bg-indigo-200  text-indigo-700 rounded-lg border border-indigo-700 p-3"
+              className="flex items-center bg-indigo-100 text-indigo-700 rounded-full px-3 py-1 border border-indigo-300"
             >
               <span>{email}</span>
               <button
